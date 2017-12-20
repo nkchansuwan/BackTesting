@@ -10,7 +10,7 @@ namespace GF.BackTesting.Client
     {
         static void Main(string[] args)
         {
-            var priceReader = new CsvPriceReader("STOCK.csv.txt");
+            var priceReader = new CsvPriceReader(args[0]);
             var reader = new CandleStickReader(timeframe: 5, PriceReader: priceReader);
 
 
