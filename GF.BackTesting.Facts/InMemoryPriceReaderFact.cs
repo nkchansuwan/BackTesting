@@ -13,14 +13,18 @@ namespace GF.BackTesting.Facts
         public void NoSeedPrice()
         {
             var reader = new InMemoryPriceReader();
-            
+
             decimal price = 0m;
             int count = 0;
 
             reader.NewPrice += (sender, e) =>
             {
-                price = e.Last;
-                count++;
+                if (e.NewPrice != null)
+                {
+                    price = e.NewPrice.Last;
+                    count++;
+
+                }
             };
 
             reader.Start();
@@ -38,7 +42,11 @@ namespace GF.BackTesting.Facts
             reader.AddSeedPrice(last: 15.0m);
             reader.NewPrice += (sender, e) =>
             {
-                price = e.Last;
+                if (e.NewPrice != null)
+                {
+
+                    price = e.NewPrice.Last;
+                }
             };
 
             reader.Start();
@@ -59,8 +67,12 @@ namespace GF.BackTesting.Facts
 
             reader.NewPrice += (sender, e) =>
             {
-                price = e.Last;
-                count++;
+                if (e.NewPrice != null)
+                {
+                    price = e.NewPrice.Last;
+                    count++;
+
+                }
             };
 
             reader.Start();

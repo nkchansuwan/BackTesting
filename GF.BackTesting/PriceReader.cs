@@ -9,6 +9,8 @@ namespace GF.BackTesting
     public abstract class PriceReader
     {
         private List<PriceItem> prices;
+        private DateTime startDateTime = new DateTime(2017, 5, 5, 10, 0, 0);
+        private int timeframe = 5;
 
         public PriceReader()
         {
@@ -43,12 +45,24 @@ namespace GF.BackTesting
 
         public virtual void Start()
         {
+            RaiseSeedPrices();
+            RaiseStopper();
+        }
+
+        protected void RaiseSeedPrices()
+        {
             foreach (var p in prices)
             {
-                var e = new NewPriceEventArgs(p);
-
-                NewPrice?.Invoke(this, e);
+                //var e = new NewPriceEventArgs(p);
+                //NewPrice?.Invoke(this, e);
+                RaiseNewPrice(p);
             }
+        }
+
+        protected void RaiseStopper()
+        {
+            var stopper = new NewPriceEventArgs(null);
+            NewPrice?.Invoke(this, stopper);
         }
     }
 }

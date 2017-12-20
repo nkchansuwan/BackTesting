@@ -18,14 +18,18 @@ namespace GF.BackTesting
 
         public override void Start()
         {
-            base.Start();
+            RaiseSeedPrices();
+            RaisPricesFromCsv();
+            RaiseStopper();
+        }
 
-            //read csv file line-by-line.
+        private void RaisPricesFromCsv()
+        {
             using (var reader = new StreamReader(stockFileName1))
             {
                 string s;
                 reader.ReadLine();
-                while ((s=reader.ReadLine())!= null)
+                while ((s = reader.ReadLine()) != null)
                 {
                     var data = s.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (data.Length < 5)
@@ -33,15 +37,14 @@ namespace GF.BackTesting
                     var p = new PriceItem
                     {
                         Date = DateTime.Parse(data[0]),
-                        Last =decimal.Parse(data[1]),
-                        Bid =decimal.Parse(data[3]),
-                        Offer =decimal.Parse(data[4]),
+                        Last = decimal.Parse(data[1]),
+                        Bid = decimal.Parse(data[3]),
+                        Offer = decimal.Parse(data[4]),
                     };
                     RaiseNewPrice(p);
                 }
             }
         }
 
-        
     }
 }

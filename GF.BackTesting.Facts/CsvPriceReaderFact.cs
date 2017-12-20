@@ -9,11 +9,11 @@ using Xunit.Abstractions;
 
 namespace GF.BackTesting.Facts
 {
-   public class CsvPriceReaderFact:IDisposable
+    public class CsvPriceReaderFact : IDisposable
     {
         private const string StockFileName1 = "stock1.csv";
 
-        public CsvPriceReaderFact(ITestOutputHelper testOutput )
+        public CsvPriceReaderFact(ITestOutputHelper testOutput)
         {
             PrepareCsvFiles();
             TestOutput = testOutput;
@@ -38,18 +38,28 @@ namespace GF.BackTesting.Facts
             int count = 0;
             //var item = new PriceItem();
             decimal price = 0m;
-            
+            bool foundStopper = false;
+
             reader.NewPrice += (sender, e) =>
             {
-                TestOutput.WriteLine($"{e.Date:s} {e.Last,10:n2} {e.Bid,10:n2} {e.Offer,10:n2}");
-                price = e.Last;
-                count++;
+                if (e.NewPrice == null)
+                {
+                    foundStopper = true;
+                }
+                else
+                {
+                    TestOutput.WriteLine($"{e.NewPrice.Date:s} {e.NewPrice.Last,10:n2} {e.NewPrice.Bid,10:n2} {e.NewPrice.Offer,10:n2}");
+                    price = e.NewPrice.Last;
+                    count++;
+                    //foundStopper = true;
+                }
             };
 
             reader.Start();
 
             Assert.Equal(4, count);
             Assert.Equal(16.0m, price);
+            Assert.True(foundStopper);
         }
 
         public void Dispose()
